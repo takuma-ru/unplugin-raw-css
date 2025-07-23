@@ -8,78 +8,64 @@ import { createUnplugin } from 'unplugin'
 
 export const unpluginFactory: UnpluginFactory<Options | undefined> = () => ({
   name: 'unplugin-raw-css',
-  enforce: 'pre', // Ensure this plugin runs before other CSS processors
+  enforce: 'pre',
   resolveId(id, importer) {
-    // Handle ?raw query parameter for SCSS/SASS files
+    // 1. “.scss?raw” が含まれる箇所をピックアップ
     if (id.includes('?raw') && id.match(/\.(scss|sass)\?raw$/)) {
       const filePath = id.split('?')[0]
 
-      // Resolve relative path if importer is available
       if (importer && filePath.startsWith('./')) {
         const resolvedPath = resolve(dirname(importer), filePath)
+        // 2. “.virtual-rawcss” という拡張子のファイルとして内部で変換
         return `${resolvedPath}.virtual-rawcss`
       }
 
+      // 2. “.virtual-rawcss” という拡張子のファイルとして内部で変換
       return `${filePath}.virtual-rawcss`
     }
     return null
   },
   load(id) {
-    // Check if the file has .virtual-rawcss extension
     if (!id.endsWith('.virtual-rawcss')) {
       return null
     }
-
-    // Extract the actual file path by removing the virtual extension
     const filePath = id.replace('.virtual-rawcss', '')
-
-    // Check if it's a SCSS/SASS file
     if (!filePath.match(/\.(scss|sass)$/)) {
       return null
     }
-
     try {
-      // Add file as dependency for HMR
       this.addWatchFile(filePath)
 
-      // Read the SCSS file content
+      // 3. “.virtual-rawcss” のファイルの中身を取得
       const scssContent = readFileSync(filePath, 'utf-8')
 
-      // Compile SCSS to CSS using sass-embedded
+      // 4. sass-embedded を使用し、css文字列に変換
       const result = compileString(scssContent, {
         loadPaths: [process.cwd(), dirname(filePath)],
-        style: 'expanded', // Use expanded style for better readability
+        style: 'expanded',
       })
 
-      // Return the compiled CSS as a string export
+      // 5. css文字列 を js の文字列として export default する
       return `export default ${JSON.stringify(result.css)};`
     }
     catch (error) {
-      // If compilation fails, throw an error with details
       this.error(`Failed to compile SCSS file ${filePath}: ${error}`)
     }
   },
   vite: {
     handleHotUpdate(ctx) {
-      // Handle HMR updates for SCSS/SASS files
       if (ctx.file.match(/\.(scss|sass)$/)) {
-        // Find all modules that import this SCSS file with ?raw
         const affectedModules: any[] = []
-
-        // Check all modules in the module graph
         ctx.server.moduleGraph.fileToModulesMap.forEach((modules, _filePath) => {
           modules.forEach((module) => {
             if (module.id?.endsWith('.virtual-rawcss')) {
               const originalPath = module.id.replace('.virtual-rawcss', '')
-              // Check if this virtual module corresponds to the changed file
               if (originalPath === ctx.file) {
                 affectedModules.push(module)
               }
             }
           })
         })
-
-        // Also check for modules that might import the file with relative paths
         const normalizedFile = resolve(ctx.file)
         ctx.server.moduleGraph.fileToModulesMap.forEach((modules, _filePath) => {
           modules.forEach((module) => {
@@ -91,21 +77,14 @@ export const unpluginFactory: UnpluginFactory<Options | undefined> = () => ({
             }
           })
         })
-
         if (affectedModules.length > 0) {
-          // Remove duplicates
           const uniqueModules = [...new Set(affectedModules)]
-
-          // Invalidate the affected modules to trigger re-compilation
           uniqueModules.forEach((module) => {
             ctx.server.moduleGraph.invalidateModule(module)
           })
-
-          // Return the affected modules to trigger HMR update
           return uniqueModules
         }
       }
-
       return []
     },
   },

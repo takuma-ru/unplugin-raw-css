@@ -9,12 +9,12 @@ import { createUnplugin } from 'unplugin'
 export const unpluginFactory: UnpluginFactory<Options | undefined> = () => ({
   name: 'unplugin-raw-css',
   enforce: 'pre', // Ensure this plugin runs before other CSS processors
-  resolveId(id, importer) {
+  resolveId(_id, _importer) {
     // 1. “.scss?raw” が含まれる箇所をピックアップ
     // 2. “.virtual-rawcss” という拡張子のファイルとして内部で変換
     return null
   },
-  load(id) {
+  load(_id) {
     // 3. “.virtual-rawcss” のファイルの中身を取得
     // 4. sass-embedded を使用し、css文字列に変換
     // 5. css文字列 を js の文字列として export default する

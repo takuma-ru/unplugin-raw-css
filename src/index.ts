@@ -7,7 +7,7 @@ import { compileString } from 'sass-embedded'
 import { createUnplugin } from 'unplugin'
 
 export const unpluginFactory: UnpluginFactory<Options | undefined> = () => ({
-  name: 'raw-css',
+  name: 'unplugin-raw-css',
   enforce: 'pre', // Ensure this plugin runs before other CSS processors
   resolveId(id, importer) {
     // Handle ?raw query parameter for SCSS/SASS files

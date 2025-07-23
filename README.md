@@ -1,28 +1,9 @@
-# unplugin-starter
-
-[![NPM version](https://img.shields.io/npm/v/unplugin-starter?color=a1b858&label=)](https://www.npmjs.com/package/unplugin-starter)
-
-Starter template for [unplugin](https://github.com/unjs/unplugin).
-
-## Template Usage
-
-To use this template, clone it down using:
-
-```bash
-npx degit unplugin/unplugin-starter my-unplugin
-```
-
-And do a global replacement of `unplugin-starter` with your plugin name.
-
-Then you can start developing your unplugin 🔥
-
-To test your plugin, run: `pnpm run dev`
-To release a new version, run: `pnpm run release`
+# unplugin-raw-css
 
 ## Install
 
 ```bash
-npm i unplugin-starter
+npm i unplugin-raw-css
 ```
 
 <details>
@@ -30,7 +11,7 @@ npm i unplugin-starter
 
 ```ts
 // vite.config.ts
-import Starter from 'unplugin-starter/vite'
+import Starter from 'unplugin-raw-css/vite'
 
 export default defineConfig({
   plugins: [
@@ -48,7 +29,7 @@ Example: [`playground/`](./playground/)
 
 ```ts
 // rollup.config.js
-import Starter from 'unplugin-starter/rollup'
+import Starter from 'unplugin-raw-css/rollup'
 
 export default {
   plugins: [
@@ -67,7 +48,7 @@ export default {
 module.exports = {
   /* ... */
   plugins: [
-    require('unplugin-starter/webpack')({ /* options */ })
+    require('unplugin-raw-css/webpack')({ /* options */ })
   ]
 }
 ```
@@ -81,7 +62,7 @@ module.exports = {
 // nuxt.config.js
 export default defineNuxtConfig({
   modules: [
-    ['unplugin-starter/nuxt', { /* options */ }],
+    ['unplugin-raw-css/nuxt', { /* options */ }],
   ],
 })
 ```
@@ -98,7 +79,7 @@ export default defineNuxtConfig({
 module.exports = {
   configureWebpack: {
     plugins: [
-      require('unplugin-starter/webpack')({ /* options */ }),
+      require('unplugin-raw-css/webpack')({ /* options */ }),
     ],
   },
 }
@@ -112,7 +93,7 @@ module.exports = {
 ```ts
 // esbuild.config.js
 import { build } from 'esbuild'
-import Starter from 'unplugin-starter/esbuild'
+import Starter from 'unplugin-raw-css/esbuild'
 
 build({
   plugins: [Starter()],

@@ -1,5 +1,3 @@
-/// <reference types="./rawCss.d.ts" />
-
 import style from './index.scss?raw'
 
 document.getElementById('app')!.innerHTML = `

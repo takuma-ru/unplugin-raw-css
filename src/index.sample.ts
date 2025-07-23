@@ -1,9 +1,6 @@
 import type { UnpluginFactory } from 'unplugin'
 import type { Options } from './types'
-import { readFileSync } from 'node:fs'
-import { dirname, resolve } from 'node:path'
-import process from 'node:process'
-import { compileString } from 'sass-embedded'
+import { resolve } from 'node:path'
 import { createUnplugin } from 'unplugin'
 
 export const unpluginFactory: UnpluginFactory<Options | undefined> = () => ({
